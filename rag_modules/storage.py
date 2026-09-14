@@ -19,7 +19,7 @@ def store_chunks(document_name:str, chunks: list[str], embeddings: list[list[flo
             """
             INSERT INTO document_chunks(document_name, chunk_text, chunk_index, embedding)
             VALUES(%s,%s,%s,%s)
-            """
+            """,
             (document_name, chunk, index, embedding)
         )
 
