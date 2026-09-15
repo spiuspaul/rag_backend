@@ -2,8 +2,10 @@ import os
 from fastapi import APIRouter, UploadFile, File
 from pypdf import PdfReader
 from rag_modules.chunking import chunk_text
-from rag_modules.embeddings import embed_chunks
-from rag_modules.storage import store_chunks 
+from rag_modules.embeddings import embed_chunks, embed_query
+from rag_modules.storage import store_chunks, search_chunks
+from rag_modules.llm_client import generate_answer
+from schema.schemas import QueryRequest
 
 router = APIRouter(prefix="/documents", tags=["documents"])
 UPLOAD_DIR = "uploads"
@@ -30,6 +32,22 @@ async def upload_file(file: UploadFile = File(...)):
         "text": text,
         "chunk_count": len(chunks)
     }
+
+@router.post("/query")
+async def query_document(request: QueryRequest):
+    query_embedding = embed_query(request.question) #embed_query
+    chunks = search_chunks(query_embedding, request.document_name) #search chunks
+    answer = generate_answer(request.question, chunks) #generate_answer
+
+    return {
+        "question": request.question,
+        "answer": answer,
+        "source_chunk_count": len(chunks)
+    }
+
+
+
+
 
 
 
