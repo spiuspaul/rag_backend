@@ -1,15 +1,32 @@
 import os
-import voyageai
+from google import genai
+from google.genai import types
 
-client = voyageai.Client(api_key=os.getenv("VOYAGE_API_KEY"))
+client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
 
 def embed_chunks(chunks: list[str]) -> list[list[float]]:
-    result = client.embed(chunks, model='voyage-2', input_type='document')
-    return result.embeddings
+    result = client.models.embed_content(
+        model="gemini-embedding-001",
+        contents=chunks,
+        config=types.EmbedContentConfig(
+            task_type="RETRIEVAL_DOCUMENT"
+        ),
+    )
+    return [e.values for e in result.embeddings]
 
 def embed_query(query: str) -> list[float]:
-    result = client.embed([query], model='voyage-2', input_type='query')
-    return result.embeddings[0]
+    result = client.models.embed_content(
+        model='gemini-embedding-001',
+        contents=[query],
+        config=types.EmbedContentConfig(
+            task_type="RETRIEVAL_QUERY"
+        ),
+    )
+    return result.embeddings[0].values
+
+
+
+
 
 
 
