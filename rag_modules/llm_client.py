@@ -1,7 +1,7 @@
 import os
-from google import genai
+from groq import Groq
 
-client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
+client = Groq(api_key=os.getenv("GROQ_API_KEY"))
 
 def generate_answer(question: str, context_chunks: list[list[float]]) -> str:
     context = "\n\n---\n\n".join(context_chunks)
@@ -16,9 +16,14 @@ def generate_answer(question: str, context_chunks: list[list[float]]) -> str:
 
     Answer:
     """
-    response = client.models.generate_content(
-        model='gemini-3-flash-preview',
-        contents=prompt
+    response = client.chat.completions.create(
+        message=[
+            {
+                "role": "user",
+                "content": prompt
+            }
+        ],
+        model="llama-3.3-70b-versatile",
     )
 
-    return response.text
+    return response.choices[0].message.content
