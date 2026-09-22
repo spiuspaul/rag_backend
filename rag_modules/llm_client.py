@@ -17,7 +17,7 @@ def generate_answer(question: str, context_chunks: list[list[float]]) -> str:
     Answer:
     """
     response = client.chat.completions.create(
-        messageS=[
+        messages=[
             {
                 "role": "user",
                 "content": prompt
