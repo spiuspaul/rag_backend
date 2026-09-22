@@ -17,7 +17,7 @@ def generate_answer(question: str, context_chunks: list[list[float]]) -> str:
     Answer:
     """
     response = client.chat.completions.create(
-        model="llama-3.3-70b-versatile",
+        model="openai/gpt-oss-120b",
         messages=[
             {
                 "role": "user",
